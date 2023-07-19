@@ -2,8 +2,15 @@ from django.urls import path
 from django_rest_passwordreset.views import reset_password_request_token, reset_password_confirm
 from magazz.views import PartnerUpdate, RegisterAccount,\
     ConfirmAccount, AccountDetails, LoginAccount, CategoryView,\
-    ShopView, ProductInfoView, BasketView, OrderView, ContactView,\
-    PartnerOrders, PartnerState, ProductViewList, PartnerNameUrl
+    ShopViewSet, ProductInfoView, BasketView, OrderView, ContactView,\
+    PartnerOrders, PartnerState, ProductViewSet, PartnerNameUrl
+
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register('product', ProductViewSet)
+router.register('shops', ShopViewSet)
+router.register('categories', CategoryView)
 
 
 
@@ -15,12 +22,14 @@ urlpatterns = [
     path('user/login', LoginAccount.as_view()),
     path('user/details', AccountDetails.as_view()),
 
-    path('categories', CategoryView.as_view()),
 
-    path('shops', ShopView.as_view()),
+    # path('categories', CategoryView.as_view()),
+
+    # path('shops', ShopViewSet.as_view()),
 
     path('products', ProductInfoView.as_view()),
-    path('product', ProductViewList.as_view()),
+    # path('product', ProductViewList.as_view()),
+
 
     path('basket', BasketView.as_view()),
 
@@ -36,4 +45,6 @@ urlpatterns = [
     path('order', OrderView.as_view(), name='order'),
 
 
-]
+
+] + router.urls
+

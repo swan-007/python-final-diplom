@@ -51,10 +51,8 @@ test = '1'
 # r = response.json()
 # pprint(r)
 
-response = requests.post('http://127.0.0.1:8000/api/v1/order',
+response = requests.get('http://127.0.0.1:8000/api/v1/categories/1/',
                         headers={'Authorization': f'Token {token_ses}'},
-                        data={'id': 1, 'contact': 1}
-
                           )
 
 r = response.json()

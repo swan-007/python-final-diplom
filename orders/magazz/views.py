@@ -150,15 +150,15 @@ class AccountDetails(APIView):
             return JsonResponse({'Status': False, 'Errors': user_serializer.errors})
 
 
-class CategoryView(ListAPIView):
+class CategoryView(ModelViewSet):
     """
     Класс для просмотра категорий
     """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    filterset_fields = ['name', 'id']
 
-
-class ShopView(ListAPIView):
+class ShopViewSet(ModelViewSet):
     """
     Класс для просмотра списка магазинов
     """
@@ -193,7 +193,7 @@ class ProductInfoView(APIView):
         return Response(serializer.data)
 
 
-class ProductViewList(ListAPIView):
+class ProductViewSet(ModelViewSet):
     """
         Класс для просмотра товаров
     """
