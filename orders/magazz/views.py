@@ -47,7 +47,6 @@ class RegisterAccount(APIView):
                 return JsonResponse({'Status': False, 'Errors': {'password': error_array}})
             else:
                 # проверяем данные для уникальности имени пользователя
-                request.data._mutable = True
                 request.data.update({})
                 user_serializer = UserSerializer(data=request.data)
                 if user_serializer.is_valid():
@@ -56,11 +55,13 @@ class RegisterAccount(APIView):
                     user.set_password(request.data['password'])
                     user.save()
                     new_user_registered.send(sender=self.__class__, user_id=user.id)
+
                     return JsonResponse({'Status': True})
                 else:
-                    return JsonResponse({'Status': False, 'Errors': user_serializer.errors})
 
-        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
+                    return JsonResponse({'Status': False, 'Errors': user_serializer.errors})
+        x = type(request.data)
+        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы', 'a': str(x)})
 
 
 class ConfirmAccount(APIView):
@@ -79,6 +80,7 @@ class ConfirmAccount(APIView):
                 token.delete()
                 return JsonResponse({'Status': True})
             else:
+
                 return JsonResponse({'Status': False, 'Errors': 'Неправильно указан токен или email'})
 
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
@@ -160,11 +162,15 @@ class CategoryView(ModelViewSet):
 
 class ShopViewSet(ModelViewSet):
     """
-    Класс для просмотра списка магазинов
+    Класс для просмотра и добавления магазинов
     """
     queryset = Shop.objects.filter(state=True)
     serializer_class = ShopSerializer
     filterset_fields = ['id', ]
+
+    def create(self, request, *args, **kwargs):
+        user = User.objects.filter(id=request.data.get('user')).update(type='shop')
+        return super().create(request, *args, **kwargs)
 
 
 class ProductInfoView(APIView):
@@ -319,9 +325,6 @@ class PartnerUpdate(APIView):
                 data = load_yaml(stream, Loader=Loader)
 
                 shop, _ = Shop.objects.get_or_create(name=data['shop'], user_id=request.user.id)
-                # print(f'++++++++{data["categories"]}+++++++++')
-                #
-                # return JsonResponse({'Status': True})
                 for category in data['categories']:
                     category_object, _ = Category.objects.get_or_create(id=category['id'], name=category['name'])
                     category_object.shops.add(shop.id)

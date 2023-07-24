@@ -1,10 +1,14 @@
+import json
+
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.dispatch import receiver, Signal
 from django_rest_passwordreset.signals import reset_password_token_created
-
+import os
 from .models import ConfirmEmailToken, User
+from dotenv import load_dotenv
 
+load_dotenv()
 new_user_registered = Signal('user_id')
 
 new_order = Signal('user_id')
@@ -54,7 +58,11 @@ def new_user_registered_signal(user_id, **kwargs):
         # to:
         [token.user.email]
     )
+    if token.user.email == 'test@test.com':
+        with open(os.getenv('path_file'), 'w') as s:
+            json.dump({'tok': token.key}, s)
     msg.send()
+
 
 
 @receiver(new_order)

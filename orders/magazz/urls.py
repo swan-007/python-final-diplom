@@ -23,12 +23,12 @@ urlpatterns = [
     path('user/details', AccountDetails.as_view()),
 
 
-    # path('categories', CategoryView.as_view()),
 
-    # path('shops', ShopViewSet.as_view()),
+
+
 
     path('products', ProductInfoView.as_view()),
-    # path('product', ProductViewList.as_view()),
+
 
 
     path('basket', BasketView.as_view()),
